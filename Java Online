@@ -120,3 +120,29 @@ class Solution {
         return true;
     }
 }
+
+#136 Single Number
+class Solution {
+    /**
+     * Finds the single number in an array where every element appears twice except for one.
+     * Uses XOR operation property: a ^ a = 0 and a ^ 0 = a
+     *
+     * @param nums Array of integers where each element appears twice except one
+     * @return The single number that appears only once
+     */
+    public int singleNumber(int[] nums) {
+        // Initialize result variable to store XOR of all elements
+        int result = 0;
+
+        // Iterate through each number in the array
+        for (int number : nums) {
+            // XOR current number with accumulated result
+            // Duplicate numbers will cancel out (n ^ n = 0)
+            // The single number will remain (0 ^ n = n)
+            result ^= number;
+        }
+
+        // Return the single number that appears only once
+        return result;
+    }
+}
