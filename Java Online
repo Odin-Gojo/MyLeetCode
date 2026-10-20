@@ -146,3 +146,79 @@ class Solution {
         return result;
     }
 }
+
+#1114 Print in Order
+class Foo {
+    // Semaphore for controlling execution of first() method
+    // Initialized with 1 permit to allow first() to run immediately
+    private Semaphore firstSemaphore = new Semaphore(1);
+  
+    // Semaphore for controlling execution of second() method
+    // Initialized with 0 permits to block second() until first() completes
+    private Semaphore secondSemaphore = new Semaphore(0);
+  
+    // Semaphore for controlling execution of third() method
+    // Initialized with 0 permits to block third() until second() completes
+    private Semaphore thirdSemaphore = new Semaphore(0);
+
+    /**
+     * Constructor for Foo class
+     */
+    public Foo() {
+        // Empty constructor - semaphores are initialized at declaration
+    }
+
+    /**
+     * Executes the first print operation
+     * This method will run first regardless of thread execution order
+     * 
+     * @param printFirst Runnable that prints "first"
+     * @throws InterruptedException if thread is interrupted while waiting
+     */
+    public void first(Runnable printFirst) throws InterruptedException {
+        // Acquire permit from firstSemaphore (will succeed immediately on first call)
+        firstSemaphore.acquire();
+      
+        // printFirst.run() outputs "first". Do not change or remove this line.
+        printFirst.run();
+      
+        // Release permit for secondSemaphore, allowing second() to proceed
+        secondSemaphore.release();
+    }
+
+    /**
+     * Executes the second print operation
+     * This method will only run after first() has completed
+     * 
+     * @param printSecond Runnable that prints "second"
+     * @throws InterruptedException if thread is interrupted while waiting
+     */
+    public void second(Runnable printSecond) throws InterruptedException {
+        // Acquire permit from secondSemaphore (blocks until first() releases it)
+        secondSemaphore.acquire();
+      
+        // printSecond.run() outputs "second". Do not change or remove this line.
+        printSecond.run();
+      
+        // Release permit for thirdSemaphore, allowing third() to proceed
+        thirdSemaphore.release();
+    }
+
+    /**
+     * Executes the third print operation
+     * This method will only run after second() has completed
+     * 
+     * @param printThird Runnable that prints "third"
+     * @throws InterruptedException if thread is interrupted while waiting
+     */
+    public void third(Runnable printThird) throws InterruptedException {
+        // Acquire permit from thirdSemaphore (blocks until second() releases it)
+        thirdSemaphore.acquire();
+      
+        // printThird.run() outputs "third". Do not change or remove this line.
+        printThird.run();
+      
+        // Release permit for firstSemaphore, resetting for potential reuse
+        firstSemaphore.release();
+    }
+}
