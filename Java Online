@@ -222,3 +222,58 @@ class Foo {
         firstSemaphore.release();
     }
 }
+
+#1115 Print Foobar Alternatively
+class FooBar {
+    private int n;
+    // Semaphore for controlling "foo" execution - initialized with 1 permit (foo goes first)
+    private Semaphore fooSemaphore = new Semaphore(1);
+    // Semaphore for controlling "bar" execution - initialized with 0 permits (bar waits)
+    private Semaphore barSemaphore = new Semaphore(0);
+
+    /**
+     * Constructor to initialize the FooBar instance with the number of iterations
+     * @param n Number of times to print "foobar"
+     */
+    public FooBar(int n) {
+        this.n = n;
+    }
+
+    /**
+     * Method executed by the "foo" thread
+     * Prints "foo" n times, alternating with bar
+     * @param printFoo Runnable that prints "foo"
+     * @throws InterruptedException if thread is interrupted while waiting
+     */
+    public void foo(Runnable printFoo) throws InterruptedException {
+        for (int i = 0; i < n; i++) {
+            // Wait for permission to print "foo" (acquire permit from fooSemaphore)
+            fooSemaphore.acquire();
+          
+            // printFoo.run() outputs "foo". Do not change or remove this line.
+            printFoo.run();
+          
+            // Signal that "bar" can now execute (release permit to barSemaphore)
+            barSemaphore.release();
+        }
+    }
+
+    /**
+     * Method executed by the "bar" thread
+     * Prints "bar" n times, alternating with foo
+     * @param printBar Runnable that prints "bar"
+     * @throws InterruptedException if thread is interrupted while waiting
+     */
+    public void bar(Runnable printBar) throws InterruptedException {
+        for (int i = 0; i < n; i++) {
+            // Wait for permission to print "bar" (acquire permit from barSemaphore)
+            barSemaphore.acquire();
+          
+            // printBar.run() outputs "bar". Do not change or remove this line.
+            printBar.run();
+          
+            // Signal that "foo" can now execute (release permit to fooSemaphore)
+            fooSemaphore.release();
+        }
+    }
+}
